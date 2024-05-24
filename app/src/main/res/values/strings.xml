@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Ayakizi</string>
+    <string name="app_name" translatable="false">Ayakizi</string>
+    <string name="maps_api_key" translatable="false">AIzaSyCwpqfhTTq8anj_nQpPJ9jkK1vPiXyzagI</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_settings">Setttings</string>
 </resources>
