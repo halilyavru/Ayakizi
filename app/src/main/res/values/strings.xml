@@ -4,4 +4,6 @@
 
     <string name="title_home">Home</string>
     <string name="title_settings">Setttings</string>
+
+    <string name="permission_rationale">Ayak izinizi takip edebilmemiz için konum erişimine izin verin.</string>
 </resources>
