@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -60,7 +61,14 @@ class FootMarkerFragment : Fragment() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                checkAndRequestBackGroundLocationPermission()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    checkAndRequestBackGroundLocationPermission()
+                }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+                    if (footMarkerViewModel.isServiceStarted()) {
+                        footMarkerViewModel.startLocationService(requireContext())
+                    }
+                }
+
             } else {
                 if(!approvedPermission(Manifest.permission.ACCESS_FINE_LOCATION)){
                     showPermissionDeniedDialog()
@@ -128,7 +136,12 @@ class FootMarkerFragment : Fragment() {
     }
 
     private fun checkAllPermissions(){
-        checkAndRequestNotificationPermission()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            checkAndRequestNotificationPermission()
+        }else{
+            checkAndRequestLocationPermission()
+        }
+
     }
 
     private fun checkPermission(permission : String): Boolean {
@@ -144,6 +157,8 @@ class FootMarkerFragment : Fragment() {
             permission
         )
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun checkAndRequestNotificationPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permission = Manifest.permission.POST_NOTIFICATIONS
@@ -164,7 +179,14 @@ class FootMarkerFragment : Fragment() {
         val permission = Manifest.permission.ACCESS_FINE_LOCATION
         when {
             checkPermission(permission) -> {
-                checkAndRequestBackGroundLocationPermission()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    checkAndRequestBackGroundLocationPermission()
+                }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+                    if (footMarkerViewModel.isServiceStarted()) {
+                        footMarkerViewModel.startLocationService(requireContext())
+                    }
+                }
+
             }
             else -> {
                 requestLocationPermissionLauncher.launch(permission)
@@ -172,18 +194,17 @@ class FootMarkerFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun checkAndRequestBackGroundLocationPermission(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            when {
-                checkPermission(permission) -> {
-                    if (footMarkerViewModel.isServiceStarted()) {
-                        footMarkerViewModel.startLocationService(requireContext())
-                    }
+        val permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        when {
+            checkPermission(permission) -> {
+                if (footMarkerViewModel.isServiceStarted()) {
+                    footMarkerViewModel.startLocationService(requireContext())
                 }
-                else -> {
-                    requestBackgroundLocationPermissionLauncher.launch(permission)
-                }
+            }
+            else -> {
+                requestBackgroundLocationPermissionLauncher.launch(permission)
             }
         }
     }
@@ -210,9 +231,11 @@ class FootMarkerFragment : Fragment() {
 
     private fun initializeButtons() {
         binding.startServiceButton.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkPermission(Manifest.permission.POST_NOTIFICATIONS) || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkPermission(Manifest.permission.POST_NOTIFICATIONS)) || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    if (checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && checkPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        footMarkerViewModel.startLocationService(requireContext())
+                    }else if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
                         footMarkerViewModel.startLocationService(requireContext())
                     }else{
                         checkAndRequestBackGroundLocationPermission()
@@ -250,12 +273,9 @@ class FootMarkerFragment : Fragment() {
                 val existingMarkerIds = addedMarkers.keys
                 locations.forEach { location ->
                     if (location.id !in existingMarkerIds) {
-                        val markerOptions = MarkerOptions()
-                            .position(LatLng(location.latitude, location.longitude))
                         val marker = addPin(location)
                         if (marker != null) {
                             addedMarkers[location.id] = marker
-                            println("eklendi : ${marker.id}")
                         }
                     }
                 }
