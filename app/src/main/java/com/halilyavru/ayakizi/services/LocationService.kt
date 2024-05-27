@@ -12,6 +12,7 @@ import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
 import android.location.Location
 import android.os.Build
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -46,7 +47,9 @@ class LocationService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            createNotificationChannel()
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(notificationId, createNotification(), FOREGROUND_SERVICE_TYPE_LOCATION)
         }else{
@@ -55,6 +58,7 @@ class LocationService : LifecycleService() {
         startLocationUpdates()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val name = "Location Service Channel"
         val descriptionText = "Channel for Location Service"
