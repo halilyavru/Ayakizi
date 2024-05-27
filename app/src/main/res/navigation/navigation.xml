@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/mapsFragment"
-        android:name="com.halilyavru.ayakizi.ui.maps.MapsFragment"
+        android:name="com.halilyavru.ayakizi.ui.maps.FootMarkerFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_foot_marker" />
 </navigation>
