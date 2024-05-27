@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">Ayakizi</string>
+    <string name="app_name" translatable="false">Ayakizi</string>
+    <string name="maps_api_key" translatable="false">AIzaSyCwpqfhTTq8anj_nQpPJ9jkK1vPiXyzagI</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_settings">Setttings</string>
+
+    <string name="dialog_permission_title">İzin Bildirimi</string>
+    <string name="dialog_permission_message">Uygulamanın fonksiyonlarının çalışabilmesi için lütfen izinleri onaylayın.</string>
+    <string name="dialog_permissions_open_settings">AYARLAR</string>
+    <string name="dialog_permissions_later">SONRA</string>
+    <string name="button_start_service">BAŞLAT</string>
+    <string name="button_stop_service">DURDUR</string>
+    <string name="button_clear">TEMİZLE</string>
 </resources>
